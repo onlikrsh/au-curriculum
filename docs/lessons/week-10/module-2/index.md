@@ -35,10 +35,10 @@ This is the day you put Weeks 1–9 to work. The benchmark workflow you sprinted
 
 ## Today's milestones
 
-1. **Lease appropriate hardware** for your charter's plan (Day 36–37 skills).
-2. **Deploy your model.** Stand it up on the leased node (Week 4 Day 19 serving-engine choice → Week 8 Day 38 connect → Week 9 Day 41 first benchmark).
-3. **Run the benchmark sweep** from your charter. Multiple configs as planned. **Stream output** (Day 39).
-4. **Pull results to `/shared/runs/capstone/<team>/<config>/`.** Stable, named, dated.
+1. **Select appropriate hardware** from the fleet for your charter's plan — `capsule list --filter` (Day 36–37 skills).
+2. **Deploy your model.** Stand it up on your chosen machine (Week 4 Day 19 serving-engine choice → Week 8 Day 38 connect → Week 9 Day 41 first benchmark).
+3. **Run the benchmark sweep** from your charter — multiple configs as planned; watch the live run output.
+4. **Results upload to the Capsule benchmark dashboard automatically** (unless `--no-upload`). Label each run so your team can find it.
 5. **Run the interactive eval** (Day 43) — your 10-prompt suite against each config.
 6. **Log everything** — see "Execution log" below.
 7. **End of day: a complete data set** sufficient to write the recommendation tomorrow.
@@ -54,7 +54,7 @@ For every run, the log entry has:
 | Command run | Reproducibility |
 | Start / end time | Cost calculation later |
 | Outcome (success / fail / partial) | Status |
-| `report.json` path | Evidence link |
+| Dashboard run link | Evidence link |
 | Eval pass/fail per prompt | Quality evidence |
 | Notes / surprises | Day 48 narrative seed |
 
@@ -63,23 +63,21 @@ Keep this in a single markdown file in your run dir. **No log = the run didn't h
 ## Suggested execution shape (per config)
 
 ```
-# 1. Lease (or reuse)
-capsule node lease --gpu <type> --duration 4h --reason "capstone team <X> config <Y>"
+# 1. Pick your machine from the fleet (Day 36-37)
+capsule list --filter "vendor=nvidia,vram>=80"
 
-# 2. Stage config
-capsule cp ./config.yaml <node>:./
+# 2. Benchmark against that config tag — results upload to the dashboard
+capsule benchmark <config-tag> <model> \
+  --backend <vllm|llamacpp|mlx|oxpython> --concurrency <C> \
+  --input-length 256 --output-length 256 --num-prompts <N>
 
-# 3. Benchmark (stream + record)
-capsule run <node> --stream -- \
-  capsule benchmark --model <M> --engine <E> --concurrency <C> \
-    --duration 60s --out /shared/runs/capstone/teamX/configY/
+# 3. Interactive eval (Day 43) — run your 10-prompt suite against this config
 
-# 4. Eval (interactive — open chat tab, run 10 prompts, record pass/fail)
+# 4. Read results on the Capsule benchmark dashboard
+#    (throughput, latency percentiles, cost-per-token).
+#    Add --no-upload to step 2 only while iterating.
 
-# 5. Pull report
-capsule storage get /shared/runs/capstone/teamX/configY/report.json ./teamX/configY/
-
-# 6. Log it
+# 5. Log it (config tag, machine unique ID, exact command, dashboard link)
 ```
 
 ## Time budget for today
@@ -96,7 +94,7 @@ If a config blows up, **don't debug forever** — note it, move on, come back if
 ## When you're stuck
 
 - "Model won't load" → memory math (Week 3 Day 12); maybe wrong GPU or wrong quant.
-- "Benchmark stalls at 0 RPS" → engine config; check `stdout.log`.
+- "Benchmark stalls at 0 RPS" → serving-engine config didn't come up; check the run's engine startup output / dashboard run status.
 - "Numbers don't match yesterday" → confound (Day 42); check warmup, neighbor processes, thermal.
 - "Eval is subjective" → write the criterion down *before* you grade; have a teammate grade independently.
 
@@ -145,15 +143,15 @@ Not gated; the score nudges you to revisit specific sections or ask OxTutor befo
     "explain": "The lesson's execution advice: 'Note the failure, move on.' Record what happened (OOM at batch size 32, FP16 runs out of memory at 70B). A logged failure is a data point. Move to the next config. If you have time at the end, come back to the failed one. Don't let one bad run turn a 4-config plan into a 1-config day."
   },
   {
-    "stem": "Why must run artifacts go in stable named directories (not /tmp)?",
+    "stem": "After a `capsule benchmark` run completes, how are its results preserved for Day 49 analysis?",
     "options": [
-      "/tmp is read-only and cannot store benchmark artifacts",
-      "/tmp is cleared on node reboot or release — artifacts in /tmp disappear when the node is gone; stable named paths in shared storage persist for analysis on Day 49",
-      "Stable directories are faster for writing large files",
-      "The benchmark tool only writes to /shared/ paths"
+      "They are copied to /tmp on the node and pulled with `capsule storage get`",
+      "`capsule benchmark` uploads results to the Capsule benchmark dashboard automatically unless you pass `--no-upload` — the dashboard is the durable, shareable record",
+      "They persist only in the node's local /shared/runs directory until the lease ends",
+      "Results are printed to stdout only; you must copy-paste them into your log"
     ],
     "answer": 1,
-    "explain": "Node-local /tmp is ephemeral — it disappears with the node. Your Day 48 run artifacts must survive to Day 49 analysis. Store in `/shared/runs/<YYYY-MM-DD-HHMM>-<label>/`. The lesson's rule: 'stable named directories in shared storage, not /tmp, not ~/, not anywhere ephemeral.'"
+    "explain": "In the real Capsule CLI, `capsule benchmark` uploads its results to the benchmark dashboard by default; add `--no-upload` only if you want to suppress the upload. The dashboard is the durable record that survives the node lease, so Day 49 analysis pulls from it. Node-local paths disappear when the lease ends, which is why you never rely on them for evidence."
   },
   {
     "stem": "What does the interactive eval on Day 48 add that the benchmark run alone doesn't provide?",
@@ -187,6 +185,28 @@ Not gated; the score nudges you to revisit specific sections or ask OxTutor befo
     ],
     "answer": 2,
     "explain": "The lesson's execution advice: 'note what didn't happen.' A logged 'not run — time constraint' entry is honest and useful for Day 49 analysis. You can still make a recommendation from the configs you did run, noting the gap. A rushed partial run with bad numbers is worse than a clean 'not run' entry — it introduces noise you have to explain on Day 50."
+  },
+  {
+    "stem": "In the real Capsule CLI, which flag selects the serving backend for `capsule benchmark`?",
+    "options": [
+      "--backend <vllm|llamacpp|mlx|oxpython>",
+      "--engine <vllm|llamacpp|mlx|oxpython>",
+      "--duration <seconds>",
+      "--out <path>"
+    ],
+    "answer": 0,
+    "explain": "The real command is `capsule benchmark <config-tag> <model> --backend <vllm|llamacpp|mlx|oxpython> --num-prompts <N>`. The serving backend is chosen with `--backend`, and that choice maps directly to your Week 4 Day 19 serving-engine decision. There is no `--engine`, `--duration`, or `--out` flag on the real benchmark command."
+  },
+  {
+    "stem": "Per the lesson's 'When you're stuck' table, what should you check first when the benchmark stalls at 0 RPS?",
+    "options": [
+      "The GPU's thermal throttling",
+      "Whether the node lease has expired",
+      "The serving-engine configuration — inspect stdout.log for engine startup errors",
+      "The charter's success criterion"
+    ],
+    "answer": 2,
+    "explain": "The debugging table maps 'Benchmark stalls at 0 RPS' to 'engine config; check stdout.log.' A 0-RPS stall means the serving engine never came up to accept requests. For contrast, 'Model won't load' points to memory math (wrong GPU or wrong quant, Week 3 Day 12), and 'Numbers don't match yesterday' points to a confound (warmup, neighbor processes, thermal — Day 42)."
   }
 ]
 </script>
