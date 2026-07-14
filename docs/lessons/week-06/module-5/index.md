@@ -8,11 +8,11 @@
   <div class="ox-lesson-header__crumbs">
     <a href="../../../">Home</a>
     <span class="sep">/</span>
-    <a href="../../">Learn</a>
+    <a href="../../../curriculum/">Learn</a>
     <span class="sep">/</span>
     <a href="../">Week 6 - Prompt Engineering + AI Agents</a>
     <span class="sep">/</span>
-    <span>Day 30 · Orchestration</span>
+    <span>Day 30 · Orchestration + Consolidation + Phase 2 Assessment</span>
     {status:week-06/module-5}
   </div>
 </div>

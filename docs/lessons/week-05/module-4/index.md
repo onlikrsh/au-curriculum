@@ -8,18 +8,12 @@
   <div class="ox-lesson-header__crumbs">
     <a href="../../../">Home</a>
     <span class="sep">/</span>
-    <a href="../../">Learn</a>
+    <a href="../../../curriculum/">Learn</a>
     <span class="sep">/</span>
     <a href="../">Week 5 - Metrics &amp; Production</a>
     <span class="sep">/</span>
-    <span>Day 24 · Cost & Economics</span>
+    <span>Day 24 · Inference Economics</span>
     {status:week-05/module-4}
-  </div>
-  <div class="ox-lesson-header__cta">
-    <a class="md-button" href="#pre-read-for-tomorrow">Pre-read</a>
-    <a class="md-button md-button--primary" href="knowledge-check/">Knowledge check</a>
-    <a class="md-button" href="assignment/">Assignment</a>
-    <a class="md-button" href="https://github.com/oxmiq/au-curriculum/tree/main/planning/source-material/Inference%20Engineering">Source material</a>
   </div>
 </div>
 <!-- AUTO-GEN:LESSON-HEADER:END -->
