@@ -1,0 +1,14 @@
+{
+  "module": "week-01/module-1",
+  "status": "passed",
+  "canonical_knowledge_check": {
+    "score": 9,
+    "total": 9,
+    "passed_at": "2026-07-19T09:33:00Z"
+  },
+  "assignment": {
+    "status": "submitted",
+    "at": "2026-07-19T09:33:00Z"
+  },
+  "practice_attempts": 1
+}

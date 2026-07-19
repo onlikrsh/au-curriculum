@@ -1,12 +1,22 @@
 {
   "version": "1.0",
-  "_note": "Derived from per-module progress/*.json by build_summary.py \u2014 do not hand-edit. The committed artifact intentionally omits a wall-clock generated_at field; if generator code wants a timestamp, write it at build time and exclude from commits to avoid noisy diffs.",
-  "modules": {},
+  "generated_at": "2026-07-19T10:00:29Z",
+  "_note": "Derived by build_summary.py from per-module progress/*.json \u2014 do not hand-edit.",
+  "modules": {
+    "week-01/module-1": {
+      "status": "passed",
+      "canonical_knowledge_check": {
+        "score": 9,
+        "total": 9,
+        "passed_at": "2026-07-19T09:33:00Z"
+      }
+    }
+  },
   "weeks": {
     "week-01": {
-      "completed": 0,
+      "completed": 1,
       "total": 5,
-      "percent": 0
+      "percent": 20
     },
     "week-02": {
       "completed": 0,
@@ -55,8 +65,8 @@
     }
   },
   "overall": {
-    "completed": 0,
+    "completed": 1,
     "total": 50,
-    "percent": 0
+    "percent": 2
   }
 }
